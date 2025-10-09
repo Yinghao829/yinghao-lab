@@ -1,0 +1,19 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: user-route
+          uri: lb://service-user
+          predicates:
+            - name: Path
+              args:
+                patterns: /api/user/**
+                matchTrailingSlash: true
+        - id: lab-route
+          uri: lb://service-lab
+          predicates:
+            - Path=/api/lab/**
+        - id: reservation-route
+          uri: lb://service-reservation
+          predicates:
+            - Path=/api/reservation/**
