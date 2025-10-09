@@ -1,6 +1,6 @@
 package com.hao;
 
-public class Main {
+public class UserMainApplication {
     public static void main(String[] args) {
         System.out.println("Hello world!");
     }
