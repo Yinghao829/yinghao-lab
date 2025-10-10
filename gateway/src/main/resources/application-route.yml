@@ -5,10 +5,7 @@ spring:
         - id: user-route
           uri: lb://service-user
           predicates:
-            - name: Path
-              args:
-                patterns: /api/user/**
-                matchTrailingSlash: true
+            - Path=/api/user/**
         - id: lab-route
           uri: lb://service-lab
           predicates:
@@ -17,3 +14,10 @@ spring:
           uri: lb://service-reservation
           predicates:
             - Path=/api/reservation/**
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowed-origin-patterns: "http://localhost:5173"
+            allowed-headers: '*'
+            allowed-methods:
+              - '*'

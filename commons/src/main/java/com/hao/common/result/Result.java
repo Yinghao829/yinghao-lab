@@ -1,4 +1,4 @@
-package com.hao.result;
+package com.hao.common.result;
 
 import lombok.Data;
 
