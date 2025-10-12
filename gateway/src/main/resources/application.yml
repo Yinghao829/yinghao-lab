@@ -8,3 +8,20 @@ spring:
       server-addr: 127.0.0.1:8848
 server:
   port: 80
+
+hao:
+  jwt:
+    user-secret-key: xQ7bZp2KtFg9DsA3JhLc5Rv8WyEu1Mo4S
+    public-paths:
+      - /api/public/**
+    auth-paths:
+      - /api/user/login/auth
+      - /api/user/register
+      - /api/user/sendCode
+    role-based-path:
+      teacher:
+        - /api/teacher/**
+      student:
+        - /api/student/**
+    shared-paths:
+      - /api/shared/**
