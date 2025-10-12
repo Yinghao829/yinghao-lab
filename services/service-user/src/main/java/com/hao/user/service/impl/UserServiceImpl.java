@@ -1,6 +1,7 @@
 package com.hao.user.service.impl;
 
 import com.hao.common.constant.MessageConstant;
+import com.hao.common.exception.UserException;
 import com.hao.dto.UserRegisterDTO;
 import com.hao.entity.User;
 import com.hao.common.exception.PhoneException;
@@ -51,8 +52,8 @@ public class UserServiceImpl implements UserService {
     public void sendCode(String phone) {
 
         // 查询手机号是否已经被注册
-        Long userId = userMapper.getByPhone(phone);
-        if (userId != null ) {
+        User user = userMapper.getByPhone(phone);
+        if (user != null ) {
             throw new PhoneException(MessageConstant.PHONE_EXISTED);
         }
         if (!isValidPhone(phone)) {
@@ -68,6 +69,21 @@ public class UserServiceImpl implements UserService {
 
         redisTemplate.opsForValue().set(redisKey, code, 5, TimeUnit.MINUTES);
 
+    }
+
+    @Override
+    public User getUserByPhoneWithRole(String phone, Integer role) {
+        User user = userMapper.getByPhone(phone);
+        if (user == null) {
+            throw new UserException(MessageConstant.USER_NOT_EXIST);
+        }
+        return user;
+    }
+
+    @Override
+    public User getUserByNumberWithRole(String number, Integer role) {
+        User user = userMapper.getByNumber(number);
+        return user;
     }
 
     private boolean isValidPhone(String phone) {

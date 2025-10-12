@@ -17,3 +17,8 @@ server:
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml
+hao:
+  jwt:
+    user-secret-key: xQ7bZp2KtFg9DsA3JhLc5Rv8WyEu1Mo4S
+    user-ttl: 7200000
+    user-token-name: token

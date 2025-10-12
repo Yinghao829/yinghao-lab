@@ -13,4 +13,5 @@ public class UserRegisterDTO implements Serializable {
     private Integer role;
     private String verifyCode;
     private String phone;
+
 }
