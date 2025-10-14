@@ -59,7 +59,7 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
         }
 
         // 解析角色
-        Integer userRole = claims.get("role", Integer.class);
+        Integer userRole = claims.get("userRole", Integer.class);
 
         // 角色权限校验
         if (!isAccessAllowed(currentPath, userRole)) {

@@ -17,6 +17,8 @@ server:
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
 hao:
   jwt:
     user-secret-key: xQ7bZp2KtFg9DsA3JhLc5Rv8WyEu1Mo4S

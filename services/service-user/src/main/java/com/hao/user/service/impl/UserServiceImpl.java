@@ -31,6 +31,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void save(UserRegisterDTO userRegisterDTO) {
+        // 查询手机号是否已经被注册
+        User user = new User();
+        user = userMapper.getByPhone(userRegisterDTO.getPhone());
+        if (user != null ) {
+            throw new PhoneException(MessageConstant.PHONE_EXISTED);
+        }
         // 校验验证码
         String redisKey = "sms:code:" + userRegisterDTO.getPhone();
         String code = (String) redisTemplate.opsForValue().get(redisKey);
@@ -41,7 +47,6 @@ public class UserServiceImpl implements UserService {
             throw new VerifyCodeException(MessageConstant.VERIFY_CODE_ERROR);
         }
 
-        User user = new User();
         BeanUtils.copyProperties(userRegisterDTO, user);
         user.setPassword(DigestUtils.md5DigestAsHex(userRegisterDTO.getPassword().getBytes()));
 
@@ -51,11 +56,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void sendCode(String phone) {
 
-        // 查询手机号是否已经被注册
-        User user = userMapper.getByPhone(phone);
-        if (user != null ) {
-            throw new PhoneException(MessageConstant.PHONE_EXISTED);
-        }
+
         if (!isValidPhone(phone)) {
             // 抛出异常 “手机号为空或格式不正确”
             throw new PhoneException(MessageConstant.PHONE_ERROR);

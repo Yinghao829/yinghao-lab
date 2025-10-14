@@ -1,4 +1,4 @@
-package com.hao.user.aspect;
+package com.hao.lab.aspect;
 
 
 import com.hao.common.annotation.AutoFill;
@@ -10,8 +10,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -28,7 +26,7 @@ public class AutoFillAspect {
     /**
      * 切入点
      */
-    @Pointcut("execution(* com.hao.user.mapper.*.*(..)) && @annotation(com.hao.common.annotation.AutoFill)" )
+    @Pointcut("execution(* com.hao.lab.mapper.*.*(..)) && @annotation(com.hao.common.annotation.AutoFill)" )
     public void autoFillPointCut() {}
 
     /**

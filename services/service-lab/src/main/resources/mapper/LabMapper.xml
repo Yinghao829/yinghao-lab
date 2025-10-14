@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hao.lab.mapper.LabMapper">
+    <select id="pageQuery" resultType="com.hao.vo.LabVO">
+        select id,
+               name,
+               location,
+               capacity,
+               status,
+               update_time,
+               description,
+               related_major
+        from lab_lab_db.lab
+        <where>
+            <if test="relatedMajor != null and relatedMajor.trim() != ''">and related_major like #{relatedMajor}</if>
+            <if test="name != null and name.trim() != ''">and name like concat('%', #{name}, '%')</if>
+        </where>
+    </select>
+
+</mapper>

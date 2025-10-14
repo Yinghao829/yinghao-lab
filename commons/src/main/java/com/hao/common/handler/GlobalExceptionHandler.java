@@ -33,6 +33,7 @@ public class GlobalExceptionHandler {
             String msg = username + MessageConstant.ALREADY_EXISTS;
             return Result.error(msg);
         } else {
+            ex.printStackTrace();
             return Result.error(MessageConstant.UNKNOWN_ERROR);
         }
     }

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hao.reservation.mapper.ReservationMapper">
+    <select id="getLabStatus" resultType="com.hao.vo.ReservationStatusVO">
+        <!-- 子查询：先构建所有需要查询的实验室ID列表（确保即使无预约也会返回） -->
+        WITH target_labs AS (
+        SELECT lab_id AS id
+        FROM (
+            <if test="idList != null and idList.size() > 0">
+                <!-- 将传入的idList拆分为多行 -->
+                <foreach collection="idList" item="labId" separator="UNION ALL">
+                    SELECT #{labId} AS lab_id
+                </foreach>
+            </if>
+            <!-- 当idList为空（null或空集合）时，返回空结果集（避免语法错误） -->
+            <if test="idList == null or idList.size() == 0">
+                select null as lab_id where 1 = 0
+            </if>
+        ) AS temp
+        )
+        <!-- 主查询：关联预约表判断状态 -->
+        SELECT
+        tl.id AS labId,
+        -- 动态判断状态：有符合条件的预约则为1（占用），否则为0（空闲）
+        CASE
+        WHEN EXISTS (
+        SELECT 1 FROM reservation r
+        WHERE r.lab_id = tl.id
+        AND r.status = 'VALID'  -- 只考虑有效预约
+        <!-- 动态条件：时间范围优先，否则用当前时间 -->
+        <choose>
+            <!-- 场景1：传入了startTime和endTime（时间范围查询） -->
+            <when test="startTime != null and endTime != null">
+                -- 预约开始 &lt; 查询结束
+                AND r.start_time &lt; #{endTime}
+                -- 预约结束 &gt; 查询开始
+                AND r.end_time &gt; #{startTime}
+            </when>
+            <!-- 场景2：传入了currentTime（当前时间查询） -->
+            <when test="currentTime != null">
+                <!-- 注意：需先将currentTime字符串转为datetime（这里假设数据库是MySQL） -->
+                AND #{currentTime} BETWEEN r.start_time AND r.end_time
+            </when>
+            <!-- 异常情况：未传时间参数 -->
+            <otherwise>
+                AND 1 = 0  -- 无时间条件时，返回所有实验室为空闲（0）
+            </otherwise>
+        </choose>
+        ) THEN 1  -- 占用
+        ELSE 0    -- 空闲
+        END AS reservationStatus
+        FROM target_labs tl;
+    </select>
+</mapper>

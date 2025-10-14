@@ -12,5 +12,13 @@ spring:
       config:
         import-check:
           enabled: false
+  profiles:
+    include: feign
 server:
   port: 9000
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

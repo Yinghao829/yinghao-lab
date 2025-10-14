@@ -20,8 +20,8 @@ hao:
       - /api/user/sendCode
     role-based-path:
       teacher:
-        - /api/teacher/**
+        - /api/lab/teacher/**
       student:
-        - /api/student/**
+        - /api/lab/student/**
     shared-paths:
-      - /api/shared/**
+      - /api/lab/shared/**
