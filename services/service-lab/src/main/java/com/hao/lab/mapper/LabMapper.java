@@ -18,4 +18,6 @@ public interface LabMapper {
     void add(Lab lab);
 
     Page<LabVO> pageQuery(LabPageQueryDTO labPageQueryDTO);
+
+    void update(Lab lab);
 }

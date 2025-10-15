@@ -5,6 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.hao.common.result.PageResult;
 import com.hao.dto.LabAddDTO;
 import com.hao.dto.LabPageQueryDTO;
+import com.hao.dto.LabUpdateDTO;
 import com.hao.dto.ReservationInfoDTO;
 import com.hao.entity.Lab;
 import com.hao.lab.feign.ReservationFeignClient;
@@ -64,5 +65,12 @@ public class LabServiceImpl implements LabService {
             labVO.setReservationStatus(status);
         });
         return new PageResult(total, list);
+    }
+
+    @Override
+    public void updateLab(LabUpdateDTO labUpdateDTO) {
+        Lab lab = new Lab();
+        BeanUtils.copyProperties(labUpdateDTO, lab);
+        labMapper.update(lab);
     }
 }

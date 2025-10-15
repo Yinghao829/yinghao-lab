@@ -14,11 +14,20 @@ spring:
           enabled: false
   profiles:
     include: feign
+  data:
+    redis:
+      database: 6
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    virtual-host: /hao
+    username: hao
+    password: hao@0829
 server:
   port: 9000
+
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml
   configuration:
     map-underscore-to-camel-case: true
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
