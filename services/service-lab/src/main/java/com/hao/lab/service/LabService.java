@@ -11,4 +11,6 @@ public interface LabService {
     PageResult pageQuery(LabPageQueryDTO labPageQueryDTO);
 
     void updateLab(LabUpdateDTO labUpdateDTO);
+
+    void deleteLab(Long id);
 }

@@ -14,12 +14,17 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.reactive.TransactionalOperator;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/lab")
@@ -38,6 +43,11 @@ public class LabController {
     public Result addLab(@RequestBody LabAddDTO labAddDTO) {
         log.info("新增实验室：{}", labAddDTO);
         labService.addLab(labAddDTO);
+        String prefix = LabConstant.LAB_QUERY_REDIS_KEY + ":page:*";
+        Set<String> keys = redisTemplate.keys(prefix);
+        if (keys != null && !keys.isEmpty()) {
+            redisTemplate.delete(keys);
+        }
         return Result.success();
     }
 
@@ -85,6 +95,26 @@ public class LabController {
                 message.getMessageProperties().setDelayLong(1000L);
                 return message;
             }
+        });
+        return Result.success();
+    }
+
+    @Transactional
+    @PostMapping("/teacher/delete")
+    public Result deleteLab(@RequestParam Long id, @RequestParam Integer page) {
+        log.info("删除实验室id：{}", id);
+        // 先删缓存
+        String key = LabConstant.LAB_QUERY_REDIS_KEY + ":page:" + page;
+        redisTemplate.delete(key);
+        // 删除
+        labService.deleteLab(id);
+        // 延时删缓存
+        LabUpdateDTO labUpdateDTO = new LabUpdateDTO();
+        labUpdateDTO.setId(id);
+        labUpdateDTO.setPage(page);
+        rabbitTemplate.convertAndSend(MqConstant.LAB_DELAY_EXCHANGE, MqConstant.LAB_DELAY_ROUTING_KEY, labUpdateDTO, message -> {
+            message.getMessageProperties().setDelayLong(1000L);
+            return message;
         });
         return Result.success();
     }
